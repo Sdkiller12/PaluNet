@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    image: palunet-api:latest
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_PATH: ${MODEL_PATH:-models/model_v1.0.0.onnx}
+      MODEL_VERSION: ${MODEL_VERSION:-}
+      DECISION_THRESHOLD: ${DECISION_THRESHOLD:-}
+      API_KEY: ${API_KEY:?Définir API_KEY dans .env}
+      RATE_LIMIT: ${RATE_LIMIT:-60/minute}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MOCK_MODEL: ${MOCK_MODEL:-false}
+      PREDICTION_LOG_FILE: /app/logs/predictions.log
+      LOG_RETENTION_DAYS: "365"
+    volumes:
+      - ./logs:/app/logs
+    # E6 — limites de ressources par instance
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    restart: unless-stopped

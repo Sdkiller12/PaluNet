@@ -1,0 +1,8 @@
+# Pipeline offline : données, entraînement, calibration, export ONNX
+-r requirements.txt
+tensorflow==2.15.1
+tf2onnx==1.16.1
+onnx==1.16.2
+protobuf>=3.20.3,<4.21
+scikit-learn==1.5.2
+matplotlib==3.9.3

@@ -1,0 +1,13 @@
+.venv
+.git
+data
+Malaria Cell Images Dataset
+*.zip
+*.csv
+logs
+notebooks
+tests
+htmlcov
+**/__pycache__
+models/keras
+models/checkpoints
