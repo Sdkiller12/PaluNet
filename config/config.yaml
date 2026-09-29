@@ -1,0 +1,58 @@
+# Configuration centrale PaluNet — source unique de vérité (B9, maintenabilité)
+seed: 42
+
+# B9 — Encodage de classe FIGÉ. Utilisé à l'identique à l'entraînement et à l'inférence.
+# La sortie sigmoïde du modèle = probabilité de la classe d'indice 1.
+# On choisit 1 = Parasitized pour que la sortie brute soit directement
+# `probability_parasitized` (la conversion reste générique si on inverse un jour).
+class_map:
+  0: Uninfected
+  1: Parasitized
+positive_class: Parasitized   # classe "malade" : rappel = métrique prioritaire
+
+data:
+  raw_dir: data/raw/cell_images          # contient Parasitized/ et Uninfected/
+  processed_dir: data/processed
+  external_dir: data/external            # jeu externe (A6) : Parasitized/ et Uninfected/
+  nih_url: https://data.lhncbc.nlm.nih.gov/public/Malaria/cell_images.zip
+  split:                                 # A4 — split stratifié PAR PATIENT
+    train: 0.70
+    val: 0.15
+    test: 0.15
+
+preprocessing:
+  image_size: 128                        # A2
+  min_side_px: 32                        # contrôle qualité (IQA) : image trop petite
+  min_std: 0.01                          # IQA : image quasi uniforme (vide / noire)
+
+augmentation:                            # A3 — appliquée au train uniquement
+  rotation_deg: 20
+  translation: 0.10
+  zoom: 0.15
+  horizontal_flip: true
+
+model:
+  version: "1.0.0"                       # B8 — semver
+  backbone: mobilenetv2
+  dense_units: 128
+  dropout: 0.3
+
+training:                                # B2 / B3
+  batch_size: 64
+  phase1: {epochs: 15, learning_rate: 1.0e-4}
+  phase2: {epochs: 10, learning_rate: 1.0e-5, unfreeze_last_layers: 30}
+  early_stopping: {monitor: val_loss, patience: 4}
+
+calibration:                             # B6
+  target_recall: 0.98
+
+export:                                  # B5
+  opset: 13
+  max_size_mb: 20
+
+acceptance:                              # 1.3 / E4
+  accuracy: 0.95
+  recall: 0.96
+  auc: 0.97
+  tolerance: 0.005
+  drift_alert_recall: 0.94               # E5

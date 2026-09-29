@@ -1,0 +1,27 @@
+# Environnement
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Données (A5 — jamais dans Git)
+data/raw/*
+data/processed/*
+data/external/*
+!data/**/.gitkeep
+Malaria Cell Images Dataset/
+*.zip
+patientid_cellmapping_*.csv
+
+# Artefacts modèle (versionnés hors Git)
+models/*
+!models/.gitkeep
+!models/README.md
+
+# Logs
+logs/*
+!logs/.gitkeep
+.env

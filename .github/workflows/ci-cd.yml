@@ -1,0 +1,49 @@
+name: ci-cd
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      # Unitaires + intégration API + non-régression (ignorée si le modèle n'est pas disponible)
+      - run: pytest --cov --cov-report=term --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+
+  docker:
+    needs: tests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ${{ secrets.REGISTRY }}
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+    steps:
+      - uses: actions/checkout@v4
+      # Le modèle n'est pas dans Git : il est récupéré depuis le stockage d'artefacts.
+      # En attendant, l'image est construite et testée en mode mock.
+      - name: Build
+        run: docker build -t palunet-api:${{ github.sha }} .
+      - name: Smoke test (mode mock)
+        run: |
+          docker run -d --name api -p 8000:8000 -e MOCK_MODEL=true palunet-api:${{ github.sha }}
+          for i in $(seq 1 30); do curl -fs localhost:8000/health && break; sleep 1; done
+          curl -fs localhost:8000/health | grep '"status":"ok"'
+      - name: Push
+        if: env.REGISTRY_USER != ''
+        env:
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+        run: |
+          echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY" -u "$REGISTRY_USER" --password-stdin
+          docker tag palunet-api:${{ github.sha }} "$REGISTRY/palunet-api:${{ github.sha }}"
+          docker push "$REGISTRY/palunet-api:${{ github.sha }}"

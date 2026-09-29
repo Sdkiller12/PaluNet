@@ -1,0 +1,31 @@
+[project]
+name = "palunet"
+version = "1.0.0"
+description = "Détection automatique du paludisme par imagerie de cellules sanguines"
+requires-python = ">=3.10,<3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+# E2 — couverture mesurée sur le code métier exécuté en ligne (API + prétraitement +
+# métriques + inférence). Les scripts offline dépendant de TensorFlow sont exclus
+# (validés par l'exécution du pipeline et les tests de non-régression du modèle).
+source = ["src"]
+omit = [
+    "src/data/download.py",
+    "src/data/prepare.py",
+    "src/models/train.py",
+    "src/models/model.py",
+    "src/models/export.py",
+    "src/models/evaluate.py",
+    "src/models/calibrate_threshold.py",
+]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true
+skip_covered = true
