@@ -1,6 +1,6 @@
 "use strict";
 
-const API_BASE = "";                 // même origine que l'API (servie par FastAPI)
+const API_BASE = ""; // même origine que l'API (servie par FastAPI)
 const MAX_BYTES = 5 * 1024 * 1024;
 const LABELS_FR = { Parasitized: "Parasitée", Uninfected: "Saine" };
 

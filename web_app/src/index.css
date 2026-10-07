@@ -1,0 +1,48 @@
+:root {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --positive: #ef4444; /* Malaria presence is a positive detection, styled red */
+  --negative: #10b981; /* Uninfected is good, styled green */
+  --warn-bg: #fef08a;
+  --warn-text: #854d0e;
+  --error-bg: #fee2e2;
+  --error-text: #991b1b;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #38bdf8;
+    --primary-dark: #0ea5e9;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --glass-bg: rgba(15, 23, 42, 0.85);
+    --warn-bg: #423214;
+    --warn-text: #fef08a;
+    --error-bg: #451a1a;
+    --error-text: #fecaca;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}

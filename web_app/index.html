@@ -1,68 +1,13 @@
 <!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PaluNet — Démonstration</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- D5 : avertissement visible sur toutes les pages -->
-  <div class="disclaimer" role="note">
-    <strong>Outil d'aide à la décision</strong> — ne remplace pas un diagnostic médical certifié.
-    Version de démonstration.
-  </div>
-
-  <main>
-    <header>
-      <h1>PaluNet</h1>
-      <p class="subtitle">Détection automatique du paludisme sur image de cellule sanguine unique</p>
-      <p id="status" class="status">Connexion à l'API…</p>
-    </header>
-
-    <section class="card">
-      <form id="form">
-        <label class="dropzone" id="dropzone">
-          <input type="file" id="file" accept="image/png,image/jpeg" hidden>
-          <span id="dropzone-text">Déposez une image PNG ou JPEG (cellule unique, max 5 Mo)<br>ou cliquez pour choisir</span>
-        </label>
-
-        <div class="options">
-          <label><input type="checkbox" id="heatmap"> Afficher la zone ayant motivé la décision (Grad-CAM)</label>
-          <details>
-            <summary>Clé API</summary>
-            <input type="password" id="api-key" placeholder="X-API-Key (si l'API l'exige)" autocomplete="off">
-          </details>
-        </div>
-
-        <button type="submit" id="submit" disabled>Analyser</button>
-      </form>
-    </section>
-
-    <section id="error" class="card error" hidden></section>
-
-    <section id="result" class="card result" hidden>
-      <div class="preview">
-        <img id="preview" alt="Image analysée">
-        <img id="overlay" alt="Carte de chaleur Grad-CAM" hidden>
-      </div>
-      <div class="verdict">
-        <p class="label">Classe prédite</p>
-        <p id="prediction" class="prediction"></p>
-        <!-- D2 : le libellé précise à quelle classe se rapporte le score -->
-        <p id="confidence-label" class="label"></p>
-        <div class="bar"><div id="confidence-bar"></div></div>
-        <p id="confidence" class="confidence"></p>
-        <p id="proba" class="detail"></p>
-        <ul id="warnings" class="warnings"></ul>
-        <p id="meta" class="detail"></p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    Aucune image n'est conservée par le service. Les journaux de prédiction sont anonymisés.
-  </footer>
-  <script src="app.js"></script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>web_app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

@@ -40,8 +40,8 @@ model:
 training:                                # B2 / B3
   batch_size: 64
   phase1: {epochs: 15, learning_rate: 1.0e-4}
-  phase2: {epochs: 10, learning_rate: 1.0e-5, unfreeze_last_layers: 30}
-  early_stopping: {monitor: val_loss, patience: 4}
+  phase2: {epochs: 30, learning_rate: 2.0e-5, unfreeze_last_layers: 100}
+  early_stopping: {monitor: val_loss, patience: 5}
 
 calibration:                             # B6
   target_recall: 0.98

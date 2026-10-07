@@ -7,6 +7,7 @@ MobileNetV2, servie par une API FastAPI + ONNX Runtime, avec une interface web d
 > V1 = démonstration uniquement (production gelée jusqu'à validation clinique).
 
 Référence : [cahier des charges V3.1](cdc-optimisé-détection-automatique-du-paludisme.md).
+Documentation technique détaillée : [docs/technique/](docs/technique/README.md).
 
 ## Installation
 
