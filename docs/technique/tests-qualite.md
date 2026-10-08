@@ -9,8 +9,9 @@ pytest -k batch                  # filtrer par nom
 Configuration dans [`pyproject.toml`](../../pyproject.toml) : `testpaths = ["tests"]`,
 `pythonpath = ["."]` (imports `src.*` sans installation), `-q`, avertissements de dépréciation masqués.
 
-État au 5 octobre 2026 (Python 3.11.9, Windows) : **67 tests passés, 4 ignorés** (non-régression
-du modèle, faute de modèle entraîné), **couverture 94 %** (seuil exigé : 70 %).
+État au 8 octobre 2026 (Python 3.11.9, Windows, modèle v1.0.0 entraîné) : **84 tests passés,
+0 ignoré** (non-régression du modèle incluse), **couverture 98 %** (seuil exigé : 70 %).
+Test de charge E3 validé le même jour (voir §5).
 
 ## 1. Organisation
 
@@ -44,6 +45,8 @@ Aucun test ne requiert TensorFlow : la CI installe seulement `requirements-dev.t
 | `test_preprocessing.py` | Forme, type et plage de `preprocess` ; **égalité exacte** entre le cache uint8 et le prétraitement de l'API ; valeurs de référence figées (détecte tout changement involontaire) ; PNG et JPEG acceptés ; autres formats, données corrompues et PNG tronqué refusés ; composition RGBA sur fond noir ; niveaux de gris → RGB ; IQA (petite image, image uniforme) ; le format réel prime sur l'extension |
 | `test_split.py` | Extraction de l'identifiant patient ; **aucun patient dans deux splits** ; proportions et équilibre des classes ; reproductibilité selon la graine ; fractions dont la somme ≠ 1 refusées ; aller-retour du manifeste |
 | `test_metrics.py` | AUC parfaite / aléatoire / inversée ; AUC égale à la définition par paires ; AUC `nan` sur une seule classe ; matrice de confusion ; `choose_threshold` atteint la cible de rappel avec la meilleure précision ; contrôles baseline et acceptation |
+| `test_artifacts.py` | Chemins versionnés (`ModelPaths`) ; version semver obligatoire ; fiche `.json` à côté du `.onnx` ; aller-retour JSON (dossiers créés, accents conservés) ; fusion de `update_metadata` |
+| `test_logger.py` | Format JSON (message, niveau, champs `extra`, exception) ; un seul handler après reconfiguration ; niveau via `LOG_LEVEL` ; journal de prédictions à rotation quotidienne avec rétention ; `get_logger` configure la racine si besoin |
 | `test_inference.py` | `class_map` figée ; validation de `class_map` ; `positive_probability` avec encodage normal et inversé ; `decide` (positif, négatif, confiance de la classe prédite, seuil calibré et non 0,5) ; `OnnxPredictor` avec fausse session (avec / sans `cam`, sortie `probability` obligatoire) ; `MockPredictor` sépare les cellules synthétiques ; signe de la carte selon la classe ; rendu PNG de la heatmap |
 
 ### Intégration (`tests/integration/test_api.py`)
@@ -91,6 +94,16 @@ locust -f tests/load/locustfile.py --host http://localhost:8000 \
 Conditions de mesure : conteneur limité à 2 vCPU / 2 Go (`docker compose`), et `RATE_LIMIT`
 relevé ou une clé par utilisateur. Sinon, les 429 font échouer le test : 20 utilisateurs
 dépassent vite 60 requêtes par minute sur une seule clé.
+
+Résultat du 8 octobre 2026 (modèle v1.0.0 ONNX, conteneur 2 vCPU / 2 Go, `RATE_LIMIT=100000/minute`,
+200 vraies images NIH, 20 utilisateurs, 2 min) :
+
+| Endpoint | Requêtes | Échecs | Médiane | P95 | P99 | Max | Débit |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `POST /v1/predict` | 2062 | 0 | 60 ms | **67 ms** | 72 ms | 173 ms | 17,4 req/s |
+| `GET /health` | 179 | 0 | 5 ms | 8 ms | 12 ms | 30 ms | 1,5 req/s |
+
+SLO respecté (P95 67 ms ≤ 500 ms, zéro échec). CSV bruts dans `reports/load_*.csv`.
 
 ## 6. Écrire un nouveau test
 
